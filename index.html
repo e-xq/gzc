@@ -10,18 +10,24 @@
 <style>
 @font-face{font-family:'U5Font';src:url('https://e-xq.github.io/U5Font_Round_7744b500.woff2') format('woff2');font-display:swap}
 :root{
-  --primary:#0057D9;--primary-c:#D8E2FF;--on-primary-c:#001551;
-  --secondary:#C0006A;--secondary-c:#FFD8E8;--on-secondary-c:#3D0021;
-  --surface:#F8F9FF;--on-surface:#1A1C27;--on-surface-v:#44464F;
-  --outline-v:#C6C6D0;--surface-low:#F2F3FA;--surface-c:#EBEBF4;--surface-0:#FFFFFF;
-  --error:#BA1A1A;--error-c:#FFDAD6;
+  --primary:#415F91;--primary-c:#D6E3FF;--on-primary-c:#001B3E;--on-primary:#FFFFFF;
+  --secondary:#565F71;--secondary-c:#DAE2F9;--on-secondary-c:#131C2B;
+  --surface:#F9F9FF;--on-surface:#191C20;--on-surface-v:#43474E;
+  --outline-v:#C3C7CF;--surface-low:#F3F3FA;--surface-c:#E7E8EE;--surface-0:#FFFFFF;
+  --error:#BA1A1A;--error-c:#FFDAD6;--on-error:#FFFFFF;
   --r-xl:28px;--r-lg:16px;--r-md:12px;--r-sm:8px;
 }
+[data-theme="dark"]{
+  --primary:#AAC7FF;--primary-c:#284777;--on-primary-c:#D6E3FF;--on-primary:#0A305F;
+  --secondary:#BBC7DB;--secondary-c:#3C4757;--on-secondary-c:#DAE2F9;
+  --surface:#111318;--on-surface:#E2E2E9;--on-surface-v:#C3C7CF;
+  --outline-v:#43474E;--surface-low:#191C20;--surface-c:#282A2F;--surface-0:#0C0E13;
+  --error:#FFB4AB;--error-c:#93000A;--on-error:#690005;
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;font-family:'U5Font','Google Sans','Noto Sans SC',sans-serif;background:var(--surface);color:var(--on-surface);-webkit-font-smoothing:antialiased;overflow:hidden}
+html,body{height:100%;font-family:'U5Font','Google Sans','Noto Sans SC',sans-serif;background:var(--surface);color:var(--on-surface);-webkit-font-smoothing:antialiased;overflow:hidden;transition:background-color .25s,color .25s}
 body{display:flex;flex-direction:column}
 
-/* ── Top bar ── */
 .top-bar{height:64px;background:var(--surface-low);border-bottom:1px solid var(--outline-v);display:flex;align-items:center;padding:0 16px 0 12px;gap:8px;flex-shrink:0}
 .top-bar-icon{width:40px;height:40px;background:var(--primary-c);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--primary);flex-shrink:0}
 .top-bar-icon .material-icons-round{font-size:22px}
@@ -34,15 +40,16 @@ body{display:flex;flex-direction:column}
 .top-btn:hover{filter:brightness(.95)}
 .top-btn .material-icons-round{font-size:16px}
 
-/* ── GH Banner ── */
 .gh-banner{padding:10px 20px;background:var(--primary-c);border-bottom:2px solid var(--primary);display:flex;align-items:center;gap:12px;flex-shrink:0}
 .gh-banner .material-icons-round{color:var(--primary);font-size:20px;flex-shrink:0}
 .gh-banner-text{flex:1;font-size:13px;color:var(--on-primary-c)}
 
-/* ── Drawer ── */
 #drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.38);z-index:200;opacity:0;visibility:hidden;pointer-events:none}
 .drawer{position:fixed;top:0;left:0;bottom:0;width:300px;background:var(--surface-low);z-index:201;transform:translateX(-100%);transition:transform .26s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;border-radius:0 var(--r-xl) var(--r-xl) 0;overflow:hidden;will-change:transform}
 .drawer.open{transform:translateX(0)}
+.top-bar,.gh-banner,.main{transition:filter .26s cubic-bezier(.4,0,.2,1)}
+.drawer.open ~ .top-bar,.drawer.open ~ .gh-banner,.drawer.open ~ .main{filter:blur(2px)}
+.drawer.open ~ .main{pointer-events:none}
 .drawer-hdr{padding:20px 20px 16px;border-bottom:1px solid var(--outline-v)}
 .drawer-brand{font-size:18px;font-weight:700;color:var(--primary)}
 .drawer-sub{font-size:13px;color:var(--on-surface-v);margin-top:4px}
@@ -60,10 +67,8 @@ body{display:flex;flex-direction:column}
 .drawer-item-active .drawer-item-text{color:var(--primary)!important}
 .drawer-divider{height:1px;background:var(--outline-v);margin:6px 16px}
 
-/* ── Main layout ── */
 .main{flex:1;display:flex;overflow:hidden;min-height:0;position:relative}
 
-/* ── Left panel ── */
 #left-panel{width:240px;flex-shrink:0;background:var(--surface-low);border-right:1px solid var(--outline-v);display:flex;flex-direction:column;overflow:hidden;height:100%}
 .panel-hdr{height:46px;padding:0 16px;font-size:11px;font-weight:700;color:var(--on-surface-v);letter-spacing:.6px;text-transform:uppercase;border-bottom:1px solid var(--outline-v);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .file-list{flex:1;overflow-y:auto}
@@ -78,16 +83,14 @@ body{display:flex;flex-direction:column}
 .file-item-close .material-icons-round{font-size:14px;color:var(--on-surface-v)}
 .file-item-close:hover .material-icons-round{color:var(--error)}
 
-/* ── Right content ── */
 #right-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 
-/* ── Toolbar ── */
 .toolbar{height:46px;padding:0 14px;background:var(--surface-0);border-bottom:1px solid var(--outline-v);display:flex;align-items:center;gap:10px;flex-shrink:0;flex-wrap:nowrap;overflow:hidden}
 .cat-chips{display:flex;gap:6px;flex-wrap:nowrap;overflow-x:auto;flex:1;scrollbar-width:none}
 .cat-chips::-webkit-scrollbar{display:none}
 .chip{display:inline-flex;align-items:center;gap:3px;padding:5px 12px;border-radius:100px;border:1px solid var(--outline-v);background:var(--surface-0);cursor:pointer;font-size:12px;font-weight:500;white-space:nowrap;transition:all .15s;flex-shrink:0}
 .chip:hover{background:var(--surface-c);border-color:var(--primary)}
-.chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.chip.active{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
 .chip-cnt{font-size:11px;background:rgba(0,0,0,.08);padding:1px 5px;border-radius:100px}
 .chip.active .chip-cnt{background:rgba(255,255,255,.22)}
 .search-wrap{position:relative;display:flex;align-items:center;flex-shrink:0}
@@ -95,24 +98,22 @@ body{display:flex;flex-direction:column}
 .search-input{width:200px;height:36px;border:1.5px solid var(--outline-v);border-radius:100px;padding:0 14px 0 34px;font-size:13px;background:var(--surface-low);color:var(--on-surface);font-family:inherit;outline:none;transition:border .15s,width .2s}
 .search-input:focus{border-color:var(--primary);width:260px}
 
-/* ── Batch bar ── */
 .batch-bar{padding:8px 14px;display:none;align-items:center;gap:10px;background:var(--primary-c);border-bottom:1px solid var(--outline-v);flex-shrink:0;flex-wrap:wrap}
 .batch-bar.show{display:flex}
 .batch-tip{font-size:13px;font-weight:500;color:var(--primary)}
 .btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border:none;border-radius:100px;font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;transition:filter .15s}
 .btn:hover{filter:brightness(1.06)}
 .btn:active{filter:brightness(.9)}
-.btn-primary{background:var(--primary);color:#fff}
+.btn-primary{background:var(--primary);color:var(--on-primary)}
 .btn-secondary{background:var(--surface-c);color:var(--on-surface);border:1px solid var(--outline-v)}
-.btn-danger{background:var(--error);color:#fff}
+.btn-danger{background:var(--error);color:var(--on-error)}
 .btn-sm{padding:6px 12px;font-size:12px}
 .btn .material-icons-round{font-size:15px}
-.btn-primary .material-icons-round,.btn-primary span.material-icons-round{color:#fff!important}
-.btn-danger .material-icons-round,.btn-danger span.material-icons-round{color:#fff!important}
+.btn-primary .material-icons-round,.btn-primary span.material-icons-round{color:var(--on-primary)!important}
+.btn-danger .material-icons-round,.btn-danger span.material-icons-round{color:var(--on-error)!important}
 .btn-secondary .material-icons-round{color:var(--on-surface-v)}
 .sel-small{height:32px;border:1.5px solid var(--outline-v);border-radius:var(--r-sm);padding:0 8px;font-size:12px;background:var(--surface-0);color:var(--on-surface);font-family:inherit;outline:none}
 
-/* ── Table (desktop) ── */
 .table-area{flex:1;overflow-y:auto;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .coin-table{width:100%;border-collapse:collapse;min-width:650px}
 .coin-table th{padding:10px 14px;font-size:11px;font-weight:700;color:var(--on-surface-v);text-align:left;background:var(--surface-low);border-bottom:1px solid var(--outline-v);position:sticky;top:0;z-index:5;white-space:nowrap;letter-spacing:.3px;cursor:pointer;user-select:none}
@@ -134,7 +135,6 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
 .empty-state.show{display:flex}
 .empty-state .material-icons-round{font-size:52px;opacity:.25}
 
-/* ── Card list (mobile) ── */
 .card-list-wrap{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none}
 .coin-card{padding:16px 16px 14px;border-bottom:1px solid var(--surface-c);cursor:pointer;transition:background .1s;display:flex;gap:10px;align-items:flex-start}
 .coin-card:active{background:var(--surface-c)}
@@ -152,17 +152,14 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
 .act-del{background:var(--error-c);color:var(--error)}
 .act-btn .material-icons-round{font-size:16px}
 
-/* ── Stats bar ── */
 .stats-bar{padding:10px 16px;background:var(--surface-low);border-top:1px solid var(--outline-v);display:flex;gap:20px;flex-wrap:wrap;align-items:center;flex-shrink:0}
 .stat{font-size:13px;color:var(--on-surface-v);display:flex;align-items:center;gap:4px}
 .stat b{color:var(--primary);font-weight:700;font-size:14px}
 
-/* ── FAB (mobile only) ── */
-.fab{position:fixed;right:16px;bottom:20px;z-index:50;width:56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;border:none;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,87,217,.38);cursor:pointer;transition:transform .15s}
+.fab{position:fixed;right:16px;bottom:20px;z-index:50;width:56px;height:56px;border-radius:50%;background:var(--primary);color:var(--on-primary);border:none;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px color-mix(in srgb,var(--primary) 38%,transparent);cursor:pointer;transition:transform .15s}
 .fab:active{transform:scale(.92)}
 .fab .material-icons-round{font-size:26px}
 
-/* ── Modal ── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
 .modal-overlay.open{opacity:1;pointer-events:all}
 .modal-box{background:var(--surface-0);border-radius:var(--r-xl);width:500px;max-width:100%;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;transform:translateY(20px) scale(.97);transition:transform .28s cubic-bezier(.34,1.1,.64,1),opacity .2s;opacity:0}
@@ -175,7 +172,7 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
 .form-group{margin-bottom:14px}
 .form-label{font-size:13px;font-weight:500;color:var(--on-surface-v);margin-bottom:5px;display:block}
 .form-input{width:100%;height:44px;border:1.5px solid var(--outline-v);border-radius:var(--r-sm);padding:0 12px;font-size:14px;background:var(--surface-low);color:var(--on-surface);font-family:inherit;outline:none;transition:border .15s}
-.form-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,87,217,.1)}
+.form-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 10%,transparent)}
 .form-input::placeholder{color:var(--on-surface-v);opacity:.55}
 .form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2344464F' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
 .form-row{display:flex;gap:12px}
@@ -184,14 +181,12 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
 .cat-row-name{flex:1;font-size:14px}
 .cat-row-def{font-size:12px;color:var(--on-surface-v)}
 
-/* ── Multi-category checkboxes ── */
 .cat-check-group{display:flex;flex-wrap:wrap;gap:8px}
 .cat-check{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1.5px solid var(--outline-v);border-radius:100px;background:var(--surface-low);cursor:pointer;font-size:13px;font-weight:500;transition:all .15s;user-select:none}
 .cat-check:hover{border-color:var(--primary)}
 .cat-check:has(input:checked){background:var(--primary-c);border-color:var(--primary);color:var(--on-primary-c)}
 .cat-check input{accent-color:var(--primary);width:15px;height:15px;cursor:pointer}
 
-/* ── Batch edit ── */
 .be-note{padding:10px 14px;background:var(--surface-c);border-radius:var(--r-sm);font-size:12px;color:var(--on-surface-v);margin-bottom:6px;line-height:1.6}
 .be-item{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--surface-c)}
 .be-item:last-child{border-bottom:none}
@@ -205,9 +200,8 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
 .be-btn:hover{border-color:var(--primary);color:var(--primary)}
 .be-count{width:66px;height:38px;border:1.5px solid var(--outline-v);border-radius:10px;text-align:center;font-size:16px;font-weight:700;background:var(--surface-low);color:var(--on-surface);font-family:inherit;outline:none;-moz-appearance:textfield}
 .be-count::-webkit-outer-spin-button,.be-count::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.be-count:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(0,87,217,.1)}
+.be-count:focus{border-color:var(--primary);box-shadow:0 0 0 3px color-mix(in srgb,var(--primary) 10%,transparent)}
 
-/* ── Snackbar ── */
 #snackbar{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#1A1C27;color:#F8F9FF;padding:12px 20px;border-radius:12px;font-size:14px;z-index:500;pointer-events:none;display:flex;align-items:flex-start;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,.28);opacity:0;visibility:hidden;max-width:90vw;white-space:normal;word-break:break-all;text-align:left}
 #snackbar.show{visibility:visible;animation:snkIn .35s cubic-bezier(.34,1.56,.64,1) forwards}
 #snackbar.hide{visibility:visible;animation:snkOut .3s ease-in forwards}
@@ -221,7 +215,6 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--outline-v);border-radius:3px}
 
-/* ════════ MOBILE (≤768px) ════════ */
 @media(max-width:768px){
   .top-bar{height:60px;padding:0 8px 0 4px;gap:4px}
   .top-bar-title{font-size:18px}
@@ -270,9 +263,7 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
 </head>
 <body>
 
-<!-- Drawer overlay -->
 <div id="drawer-overlay" onclick="closeDrawer()"></div>
-<!-- Drawer -->
 <div class="drawer" id="drawer">
   <div class="drawer-hdr">
     <div class="drawer-brand"><span class="material-icons-round" style="font-size:18px;vertical-align:-3px;margin-right:4px">toll</span>纪念币库存管理</div>
@@ -307,7 +298,6 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
   </div>
 </div>
 
-<!-- Top bar -->
 <div class="top-bar">
   <button class="icon-btn" onclick="openDrawer()"><span class="material-icons-round">menu</span></button>
   <div class="top-bar-icon"><span class="material-icons-round">toll</span></div>
@@ -316,17 +306,16 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
   <button class="top-btn" id="syncUpBtn" style="display:none" onclick="syncToGitHub()"><span class="material-icons-round">cloud_upload</span>同步到云端</button>
   <button class="top-btn" id="syncDnBtn" style="display:none" onclick="syncFromGitHub()"><span class="material-icons-round">cloud_download</span>从云端拉取</button>
   <button class="icon-btn" id="mobileSearchBtn" style="display:none" onclick="toggleMobileSearch()"><span class="material-icons-round">search</span></button>
+  <button class="icon-btn" id="themeToggle" onclick="toggleTheme()" title="切换主题" aria-label="切换主题"><span class="material-icons-round">dark_mode</span></button>
   <button class="icon-btn" id="addBtnTop" onclick="openAddModal()" title="新增纪念币"><span class="material-icons-round">add</span></button>
 </div>
 
-<!-- GH Banner -->
 <div class="gh-banner" id="ghBanner" style="display:none">
   <span class="material-icons-round">cloud_off</span>
   <span class="gh-banner-text">尚未配置 GitHub 云端同步，数据仅保存在本地浏览器。</span>
-  <button class="btn btn-primary btn-sm" onclick="openGHModal()"><span class="material-icons-round" style="color:#fff">settings</span>立即配置</button>
+  <button class="btn btn-primary btn-sm" onclick="openGHModal()"><span class="material-icons-round" style="color:var(--on-primary)">settings</span>立即配置</button>
 </div>
 
-<!-- Mobile search bar -->
 <div id="mobileSearchBar" style="display:none;padding:8px 12px;background:var(--surface-0);border-bottom:1px solid var(--outline-v);flex-shrink:0;">
   <div style="position:relative;display:flex;align-items:center;">
     <span class="material-icons-round" style="position:absolute;left:10px;font-size:18px;color:var(--on-surface-v);pointer-events:none">search</span>
@@ -335,9 +324,7 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
   </div>
 </div>
 
-<!-- Main -->
 <div class="main">
-  <!-- Left panel -->
   <div id="left-panel">
     <div class="panel-hdr">
       <span>文件列表</span>
@@ -349,9 +336,7 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
     <div class="file-list" id="fileList"></div>
   </div>
 
-  <!-- Right panel -->
   <div id="right-panel">
-    <!-- Toolbar -->
     <div class="toolbar">
       <div class="cat-chips" id="catChips"></div>
       <div class="search-wrap" id="desktopSearchWrap">
@@ -360,7 +345,6 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
       </div>
     </div>
 
-    <!-- Batch bar -->
     <div class="batch-bar" id="batchBar">
       <span class="batch-tip">已选 <b id="batchCount">0</b> 条</span>
       <button class="btn btn-primary btn-sm" onclick="openBatchEditModal()"><span class="material-icons-round">edit_note</span>批量编辑</button>
@@ -375,7 +359,6 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
       <button class="btn btn-secondary btn-sm" onclick="clearSelected()"><span class="material-icons-round">close</span>取消</button>
     </div>
 
-    <!-- Desktop table -->
     <div class="table-area" id="tableArea">
       <table class="coin-table">
         <thead><tr>
@@ -396,7 +379,6 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
       </div>
     </div>
 
-    <!-- Mobile card list -->
     <div class="card-list-wrap" id="cardListWrap">
       <div class="empty-state" id="emptyStateMobile">
         <span class="material-icons-round">inbox</span>
@@ -405,18 +387,14 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
       <div id="cardList"></div>
     </div>
 
-    <!-- Stats bar -->
     <div class="stats-bar" id="statsBar"></div>
   </div>
 </div>
 
-<!-- FAB (mobile) -->
 <button class="fab" onclick="openAddModal()"><span class="material-icons-round">add</span></button>
 
-<!-- Snackbar -->
 <div id="snackbar"><span class="material-icons-round" id="snack-icon">check_circle</span><span id="snack-text"></span></div>
 
-<!-- Add/Edit Modal -->
 <div class="modal-overlay" id="addModal" onclick="if(event.target===this)closeAddModal()">
   <div class="modal-box">
     <div class="modal-handle"></div>
@@ -456,7 +434,6 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
   </div>
 </div>
 
-<!-- Category Modal -->
 <div class="modal-overlay" id="catModal" onclick="if(event.target===this)closeCatModal()">
   <div class="modal-box" style="width:420px">
     <div class="modal-handle"></div>
@@ -478,7 +455,6 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
   </div>
 </div>
 
-<!-- GitHub Modal -->
 <div class="modal-overlay" id="ghModal" onclick="if(event.target===this)closeGHModal()">
   <div class="modal-box">
     <div class="modal-handle"></div>
@@ -514,7 +490,6 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
   </div>
 </div>
 
-<!-- Batch Edit Modal -->
 <div class="modal-overlay" id="batchEditModal" onclick="if(event.target===this)closeBatchEditModal()">
   <div class="modal-box">
     <div class="modal-handle"></div>
@@ -537,16 +512,32 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
 <input type="file" id="importInput" accept=".json" style="display:none" onchange="handleImportFile(event)">
 
 <script>
+function toggleTheme(){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  if(isDark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('theme','light');}
+  else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('theme','dark');}
+  updateThemeIcon();
+}
+function updateThemeIcon(){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const icon=document.querySelector('#themeToggle .material-icons-round');
+  if(icon) icon.textContent=isDark?'light_mode':'dark_mode';
+}
+(function(){
+  const saved=localStorage.getItem('theme');
+  if(saved==='dark'||(!saved&&window.matchMedia('(prefers-color-scheme: dark)').matches)){
+    document.documentElement.setAttribute('data-theme','dark');
+  }
+  updateThemeIcon();
+})();
+
 const DEF_CAT_ID=1,DEF_CAT_NAME='未分类';
 let repo={},curFile='',curCatFilter=[],selectedIds=[],editingId=null,sortKey=null,sortDir=1;
 let ghConfig={token:'',repo:'',path:''};
 
-// ── Responsive ──
 const isMobile=()=>window.innerWidth<=768;
-// ── HTML escape (prevent XSS) ──
 function h(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
 
-// ── Snackbar ──
 let _snkT,_snkH,_snkDone=null;
 function showSnack(msg,isErr=false){
   const el=document.getElementById('snackbar');
@@ -575,7 +566,6 @@ function showSnack(msg,isErr=false){
   },2500);
 }
 
-// ── Data helpers ──
 function getCurFile(){return repo[curFile]||{coins:[],categories:[]}}
 function getCurCoins(){return getCurFile().coins}
 function getCurCats(){fixData();return getCurFile().categories}
@@ -594,7 +584,6 @@ function fixData(){
   f.coins.forEach((c,i)=>{
     if(!c.id||isNaN(Number(c.id)))c.id=maxId+i+1;
     c.id=Number(c.id);
-    // 兼容旧数据：categoryId(单分类) → categoryIds(多分类)
     if(!Array.isArray(c.categoryIds))c.categoryIds=[Number(c.categoryId)||DEF_CAT_ID];
     c.categoryIds=c.categoryIds.map(x=>Number(x)).filter(x=>!isNaN(x)&&x>0);
     c.categoryIds=c.categoryIds.filter(x=>valid.includes(x));
@@ -621,7 +610,6 @@ function getFiltered(){
   return list;
 }
 
-// ── Init ──
 function init(){
   try{
     const s=localStorage.getItem('coinRepo_v3');if(s){try{repo=JSON.parse(s)}catch{repo={}}}
@@ -631,7 +619,6 @@ function init(){
   }catch(e){console.error(e)}
 }
 
-// ── Responsive layout switching ──
 function updateResponsive(){
   const m=isMobile();
   document.getElementById('mobileSearchBtn').style.display=m?'flex':'none';
@@ -644,7 +631,6 @@ function updateResponsive(){
     if(fs)fs.style.display='none';
     if(fl)fl.style.display='none';
     if(fd)fd.style.display='none';
-    // ★修复：切回电脑版时自动收起手机搜索栏并清空
     const msb=document.getElementById('mobileSearchBar');
     if(msb){msb.style.display='none';document.getElementById('mobileSearchInput').value='';}
   }
@@ -661,7 +647,6 @@ window.addEventListener('resize',()=>{
   },100);
 });
 
-// ── Render all ──
 function renderAll(){renderFileList();renderCatChips();renderCatOptions();renderList();updateDrawerSub();updateGHStatus()}
 function updateDrawerSub(){
   const el=document.getElementById('drawerSub');
@@ -677,7 +662,6 @@ function updateGHStatus(){
   if(d)d.style.display=(!isMobile()&&ok)?'flex':'none';
 }
 
-// ── Drawer ──
 function openDrawer(){
   if(_animRaf){cancelAnimationFrame(_animRaf);_animRaf=null;}
   const d=document.getElementById('drawer');
@@ -729,7 +713,6 @@ function renderDrawerFileList(){
     </div>`).join('');
 }
 
-// ── File list ──
 function renderFileList(){
   const names=Object.keys(repo);
   document.getElementById('fileList').innerHTML=names.map(n=>`
@@ -759,7 +742,6 @@ function closeFile(name){
   fixData();autoSave();renderAll();updateBatchBar();showSnack(`已关闭 ${name}`)
 }
 
-// ── Cat chips (多选筛选) ──
 function renderCatChips(){
   const cats=getCurCats();const coins=getCurCoins();const total=coins.length;
   const activeArr=curCatFilter||[];
@@ -773,11 +755,9 @@ function renderCatChips(){
 function quickFilter(id){
   if(id===null){curCatFilter=[];}
   else if(id===DEF_CAT_ID){
-    // ★未分类互斥：点了未分类，清掉前面选的；若当前只剩未分类，再点一次=全部
     if(curCatFilter.length===1&&curCatFilter[0]===DEF_CAT_ID)curCatFilter=[];
     else curCatFilter=[DEF_CAT_ID];
   }else{
-    // ★点其他分类时，自动把未分类从筛选中去掉
     const arr=curCatFilter.filter(x=>x!==DEF_CAT_ID);
     const i=arr.indexOf(id);
     if(i>=0)arr.splice(i,1);else arr.push(id);
@@ -786,7 +766,6 @@ function quickFilter(id){
   selectedIds=[];renderCatChips();renderList();updateBatchBar();
 }
 
-// ── Render list (desktop table + mobile cards) ──
 function renderList(){
   const list=getFiltered();
   const isMob=isMobile();
@@ -834,13 +813,11 @@ function renderList(){
   const catLabel=(curCatFilter&&curCatFilter.length)?curCatFilter.map(c=>getCatName(c)).join(' + '):'全部分类';
   document.getElementById('statsBar').innerHTML=`<span class="stat">范围：${catLabel}</span><span class="stat">总数量：<b>${total}</b> 枚</span><span class="stat">总面值：<b>${money.toFixed(2)}</b> 元</span>`;
 }
-// 手机卡片：无选中时点卡片直接进编辑；有选中时点卡片切换勾选
 function cardTap(id,e){
   if(e.target.tagName==='INPUT'||e.target.closest('button'))return;
   if(selectedIds.length>0){toggleSel(id);}
   else{editItem(id);}
 }
-// 桌面表格：点整行切换勾选（手机版是卡片，不经过这里；复选框/按钮点击不触发）
 function tableTap(id,e){
   if(e.target.tagName==='INPUT'||e.target.closest('button'))return;
   toggleSel(id);
@@ -854,7 +831,6 @@ function sortCol(key){
 function sortByName(){getCurCoins().sort((a,b)=>a.name.localeCompare(b.name,'zh-CN'));autoSave();renderList();showSnack('已按名称排序')}
 function sortByType(){getCurCoins().sort((a,b)=>(a.type||'').localeCompare(b.type||'','zh-CN',{numeric:true}));autoSave();renderList();showSnack('已按版别排序')}
 
-// ── Select & Batch ──
 function toggleSelectAll(checked){selectedIds=checked?getFiltered().map(c=>c.id):[];renderList();updateBatchBar()}
 function toggleSel(id){const i=selectedIds.indexOf(id);if(i>=0)selectedIds.splice(i,1);else selectedIds.push(id);renderList();updateBatchBar()}
 function clearSelected(){selectedIds=[];renderList();updateBatchBar()}
@@ -873,11 +849,9 @@ function doBatchCat(){
   let msg='';
   if(act==='add'){
     if(id===DEF_CAT_ID){
-      // ★添加未分类=互斥：清掉其他分类，只留未分类
       let n=0;coins.forEach(c=>{if(c.categoryIds.length!==1||c.categoryIds[0]!==DEF_CAT_ID){c.categoryIds=[DEF_CAT_ID];n++;}});
       msg=n?`已将 ${n} 条设为「未分类」（已清除其他分类）`:'所选条目均已是未分类';
     }else{
-      // ★添加普通分类：自动去掉未分类，再添加
       let n=0;coins.forEach(c=>{
         const has=c.categoryIds.includes(id);
         c.categoryIds=c.categoryIds.filter(x=>x!==DEF_CAT_ID);
@@ -886,11 +860,10 @@ function doBatchCat(){
       msg=n?`已为 ${n} 条添加分类「${getCatName(id)}」`:'所选条目均已在该分类中';
     }
   }else if(act==='remove'){
-    // ★未分类是兜底，不能"移除"
     if(id===DEF_CAT_ID){showSnack('未分类是兜底分类，无需移除（空分类会自动归入未分类）',true);return}
     let n=0;coins.forEach(c=>{if(c.categoryIds.includes(id)){c.categoryIds=c.categoryIds.filter(x=>x!==id);if(!c.categoryIds.length)c.categoryIds=[DEF_CAT_ID];n++;}});
     msg=n?`已从 ${n} 条移除分类「${getCatName(id)}」`:'所选条目均不在该分类中';
-  }else{ // 设为该分类
+  }else{
     coins.forEach(c=>c.categoryIds=[id]);
     msg=`已将 ${coins.length} 条设置为「${getCatName(id)}」`;
   }
@@ -904,7 +877,6 @@ function batchDelete(){
   selectedIds=[];fixData();autoSave();renderAll();updateBatchBar();showSnack('批量删除成功！')
 }
 
-// ── Batch Edit (出入库) ──
 function openBatchEditModal(){
   if(!selectedIds.length){showSnack('请先选择要编辑的物品！',true);return}
   const coins=getCurCoins();
@@ -954,12 +926,10 @@ function saveBatchEdit(){
   closeBatchEditModal();
 }
 
-// ── Cat options (多选) ──
 function renderCatOptions(){
   const el=document.getElementById('fCats');if(!el)return;
   el.innerHTML=getCurCats().map(c=>`<label class="cat-check"><input type="checkbox" value="${c.id}" onchange="onCatCheck(this)"><span>${h(c.name)}</span></label>`).join('');
 }
-// ★互斥：勾选【未分类】自动取消其他；勾选其他自动取消【未分类】
 function onCatCheck(el){
   const id=Number(el.value);
   if(id===DEF_CAT_ID){
@@ -969,12 +939,10 @@ function onCatCheck(el){
   }
 }
 
-// ── Add/Edit Modal ──
 function openAddModal(){
   editingId=null;document.getElementById('addModalTitle').textContent='新增纪念币';
   document.getElementById('saveBtnTxt').textContent='新增';
   renderCatOptions();clearAddForm();
-  // ★快捷：当前筛选了哪些分类，新增时自动勾选哪些
   (curCatFilter||[]).forEach(cid=>{
     const inp=document.querySelector(`#fCats input[value="${cid}"]`);
     if(inp)inp.checked=true;
@@ -1025,7 +993,6 @@ function deleteItem(id){
   fixData();autoSave();renderAll();updateBatchBar();showSnack('已删除！')
 }
 
-// ── Category Modal ──
 function openCatModal(){renderCatList();document.getElementById('catModal').classList.add('open')}
 function closeCatModal(){document.getElementById('catModal').classList.remove('open')}
 function renderCatList(){
@@ -1061,7 +1028,6 @@ function deleteCategoryM(id){
   autoSave();renderAll();renderCatList();showSnack('分类已删除！')
 }
 
-// ── Mobile search ──
 function toggleMobileSearch(){
   const bar=document.getElementById('mobileSearchBar');
   const hidden=bar.style.display==='none'||!bar.style.display;
@@ -1074,7 +1040,6 @@ function closeMobileSearch(){
   document.getElementById('mobileSearchInput').value='';renderList();
 }
 
-// ── Import / Export ──
 function triggerImport(){document.getElementById('importInput').click()}
 function handleImportFile(e){
   const file=e.target.files[0];if(!file)return;
@@ -1104,7 +1069,6 @@ function clearAll(){
   getCurFile().coins=[];selectedIds=[];editingId=null;fixData();autoSave();renderAll();updateBatchBar();showSnack('已清空当前库存！')
 }
 
-// ── GitHub ──
 function loadGHConfig(){try{const s=localStorage.getItem('coinGHConfig');if(s)ghConfig=JSON.parse(s)}catch{}updateGHStatus()}
 function openGHModal(){
   document.getElementById('ghToken').value=ghConfig.token||'';
@@ -1230,12 +1194,10 @@ async function testGHConfig(){
   }
 }
 
-// ════ Mobile panel logic (drawer-based) ════
 let _animRaf=null;
 function _easeInOut(t){return t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2}
 function closeMobilePanel(){closeDrawer();}
 
-// ── Touch drag to open/close Drawer on mobile ──
 let _tx=0,_ty=0,_tmode=null,_tmoved=false,_tdrawerOpen=false;
 function _getDrawerRatio(){
   const d=document.getElementById('drawer');
@@ -1339,12 +1301,10 @@ document.addEventListener('touchend',e=>{
   _tmode=null;_tmoved=false;
 },{passive:true});
 
-// ── ESC ──
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){closeDrawer();closeAddModal();closeCatModal();closeGHModal();closeBatchEditModal()}
 });
 
-// ── Boot ──
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
 else init();
 </script>
