@@ -619,18 +619,21 @@ function init(){
   }catch(e){console.error(e)}
 }
 
+function _updateDrawerFileSection(){
+  const m=isMobile();
+  ['drawerFileSection','drawerFileList','drawerFileDivider'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    el.style.display=m?(id==='drawerFileSection'?'flex':''):'none';
+  });
+}
 function updateResponsive(){
   const m=isMobile();
   document.getElementById('mobileSearchBtn').style.display=m?'flex':'none';
   const emptyEl=document.getElementById('emptyHint');
   if(emptyEl)emptyEl.textContent=m?'暂无数据，点击右下角 + 新增':'暂无数据，点击右上角 + 新增纪念币';
-  const fs=document.getElementById('drawerFileSection');
-  const fl=document.getElementById('drawerFileList');
-  const fd=document.getElementById('drawerFileDivider');
+  _updateDrawerFileSection();
   if(!m){
-    if(fs)fs.style.display='none';
-    if(fl)fl.style.display='none';
-    if(fd)fd.style.display='none';
     const msb=document.getElementById('mobileSearchBar');
     if(msb){msb.style.display='none';document.getElementById('mobileSearchInput').value='';}
   }
@@ -666,13 +669,7 @@ function openDrawer(){
   if(_animRaf){cancelAnimationFrame(_animRaf);_animRaf=null;}
   const d=document.getElementById('drawer');
   const ov=document.getElementById('drawer-overlay');
-  const m=isMobile();
-  ['drawerFileSection','drawerFileList','drawerFileDivider'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(!el)return;
-    if(m){el.style.display=id==='drawerFileSection'?'flex':'';}
-    else{el.style.display='none';}
-  });
+  _updateDrawerFileSection();
   d.style.transition='';
   d.style.transform='';
   d.classList.add('open');
@@ -1240,6 +1237,7 @@ function _commitDrawer(open){
   _tdrawerOpen=open;
   const from=_getDrawerRatio();
   if(open){
+    _updateDrawerFileSection();
     _animateDrawer(from,1,280,()=>{
       const d=document.getElementById('drawer');
       d.style.transition='';d.style.transform='';
@@ -1278,7 +1276,10 @@ document.addEventListener('touchmove',e=>{
     d.style.transition='none';
     ov.style.transition='none';
     ov.style.visibility='visible';
-    if(_tmode==='open')d.style.transform='translateX(-100%)';
+    if(_tmode==='open'){
+      _updateDrawerFileSection();
+      d.style.transform='translateX(-100%)';
+    }
   }
   const d=document.getElementById('drawer');
   const ov=document.getElementById('drawer-overlay');
