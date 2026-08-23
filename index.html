@@ -130,6 +130,8 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
 .row-btn .material-icons-round{font-size:15px}
 .btn-edit{background:var(--primary-c);color:var(--primary)}
 .btn-del{background:var(--error-c);color:var(--error)}
+.btn-move{background:var(--surface-c);color:var(--on-surface-v)}
+.row-btn:disabled{opacity:.3;cursor:not-allowed;pointer-events:none}
 .cat-badge{display:inline-block;padding:2px 8px;border-radius:100px;background:var(--primary-c);color:var(--on-primary-c);font-size:11px;font-weight:600}
 .empty-state{display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:80px 20px;color:var(--on-surface-v)}
 .empty-state.show{display:flex}
@@ -162,7 +164,7 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
 
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
 .modal-overlay.open{opacity:1;pointer-events:all}
-.modal-box{background:var(--surface-0);border-radius:var(--r-xl);width:500px;max-width:100%;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;transform:translateY(20px) scale(.97);transition:transform .28s cubic-bezier(.34,1.1,.64,1),opacity .2s;opacity:0}
+.modal-box{background:var(--surface-0);border:1px solid var(--outline-v);border-radius:var(--r-xl);width:500px;max-width:100%;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;transform:translateY(20px) scale(.97);transition:transform .28s cubic-bezier(.34,1.1,.64,1),opacity .2s;opacity:0}
 .modal-overlay.open .modal-box{transform:none;opacity:1}
 .modal-hdr{padding:20px 24px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--outline-v)}
 .modal-title{font-size:18px;font-weight:700;flex:1}
@@ -267,7 +269,7 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
 <div class="drawer" id="drawer">
   <div class="drawer-hdr">
     <div class="drawer-brand"><span class="material-icons-round" style="font-size:18px;vertical-align:-3px;margin-right:4px">toll</span>纪念币库存管理</div>
-    <div class="drawer-sub" id="drawerSub">载入中...</div>
+    <div class="drawer-sub" id="drawerSub">加载中...</div>
   </div>
   <div class="drawer-body">
     <div class="drawer-section" id="drawerFileSection" style="display:none;flex-direction:row;align-items:center;justify-content:space-between;padding-right:16px">
@@ -287,6 +289,9 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
     <div class="drawer-divider"></div>
     <div class="drawer-section">分类管理</div>
     <div class="drawer-item" onclick="openCatModal();closeDrawer()"><span class="material-icons-round">folder</span><span class="drawer-item-text">管理分类</span></div>
+    <div class="drawer-divider"></div>
+    <div class="drawer-section">显示设置</div>
+    <div class="drawer-item" onclick="openWmModal();closeDrawer()"><span class="material-icons-round">water_drop</span><span class="drawer-item-text">设置水印</span></div>
     <div class="drawer-divider"></div>
     <div class="drawer-section">云端同步</div>
     <div class="drawer-item" onclick="openGHModal();closeDrawer()"><span class="material-icons-round">cloud_sync</span><span class="drawer-item-text">GitHub 云端配置</span></div>
@@ -346,7 +351,7 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
     </div>
 
     <div class="batch-bar" id="batchBar">
-      <span class="batch-tip">已选 <b id="batchCount">0</b> 条</span>
+      <span class="batch-tip">已选择 <b id="batchCount">0</b> 条</span>
       <button class="btn btn-primary btn-sm" onclick="openBatchEditModal()"><span class="material-icons-round">edit_note</span>批量编辑</button>
       <select class="sel-small" id="batchCatAction">
         <option value="add">添加到分类</option>
@@ -375,14 +380,14 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
       </table>
       <div class="empty-state" id="emptyState">
         <span class="material-icons-round">inbox</span>
-        <p id="emptyHint">暂无数据，点击右上角 + 新增纪念币</p>
+        <p id="emptyHint">暂无数据，请点击右上角「+」新增纪念币</p>
       </div>
     </div>
 
     <div class="card-list-wrap" id="cardListWrap">
       <div class="empty-state" id="emptyStateMobile">
         <span class="material-icons-round">inbox</span>
-        <p>暂无数据，点击右下角 + 新增</p>
+        <p>暂无数据，请点击右下角「+」新增</p>
       </div>
       <div id="cardList"></div>
     </div>
@@ -447,6 +452,7 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
         <input class="form-input" id="newCatInput" type="text" placeholder="新分类名称" style="flex:1">
         <button class="btn btn-primary" onclick="doAddCat()"><span class="material-icons-round">add</span>新增</button>
       </div>
+      <div style="font-size:12px;color:var(--on-surface-v);margin-bottom:8px;line-height:1.6">使用 ↑↓ 调整分类顺序；「未分类」固定显示于首位。</div>
       <div id="catList"></div>
     </div>
     <div class="modal-footer">
@@ -464,11 +470,11 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
       <button class="icon-btn" onclick="closeGHModal()"><span class="material-icons-round">close</span></button>
     </div>
     <div class="modal-body">
-      <p style="font-size:13px;color:var(--on-surface-v);margin-bottom:16px;line-height:1.6">配置 GitHub Token 后，数据将同步到你的 GitHub 仓库，实现云端备份与多设备共享。</p>
+      <p style="font-size:13px;color:var(--on-surface-v);margin-bottom:16px;line-height:1.6">配置 GitHub Token 后，数据将同步至 GitHub 仓库，实现云端备份与多设备共享。</p>
       <div class="form-group">
         <label class="form-label">GitHub Personal Access Token</label>
         <input class="form-input" id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-        <div style="font-size:12px;color:var(--on-surface-v);margin-top:4px">需要 <b>repo</b> 权限（Contents 读写）。<a href="https://github.com/settings/tokens/new" target="_blank" style="color:var(--primary)">点击此处生成 Token</a></div>
+        <div style="font-size:12px;color:var(--on-surface-v);margin-top:4px">需要 <b>repo</b> 权限（Contents 读写权限）。<a href="https://github.com/settings/tokens/new" target="_blank" style="color:var(--primary)">点击此处生成 Token</a></div>
       </div>
       <div class="form-group">
         <label class="form-label">仓库</label>
@@ -477,7 +483,7 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
       <div class="form-group">
         <label class="form-label">库存文件路径（在仓库中的完整路径）</label>
         <input class="form-input" id="ghPath" type="text" placeholder="库存文件完整路径">
-        <div style="font-size:12px;color:var(--on-surface-v);margin-top:4px">根目录填 <code style="background:var(--surface-c);padding:1px 5px;border-radius:4px">文件名.json</code>，子目录填 <code style="background:var(--surface-c);padding:1px 5px;border-radius:4px">子目录名/文件名.json</code></div>
+        <div style="font-size:12px;color:var(--on-surface-v);margin-top:4px">根目录填写 <code style="background:var(--surface-c);padding:1px 5px;border-radius:4px">文件名.json</code>，子目录填写 <code style="background:var(--surface-c);padding:1px 5px;border-radius:4px">子目录名/文件名.json</code></div>
       </div>
       <div id="ghTestResult" style="display:none;margin-top:8px;padding:10px 14px;border-radius:var(--r-sm);font-size:13px;line-height:1.5"></div>
     </div>
@@ -499,12 +505,43 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
       <button class="icon-btn" onclick="closeBatchEditModal()"><span class="material-icons-round">close</span></button>
     </div>
     <div class="modal-body">
-      <div class="be-note">逐条点击 <b>− / +</b> 或直接输入数量完成出入库，保存后统一生效（数量不会低于 0）。</div>
+      <div class="be-note">填写<b>出入库数量</b>：正数表示入库（+N），负数表示出库（-N）；可通过 <b>− / +</b> 快速调整。</div>
       <div id="batchEditList"></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeBatchEditModal()">取消</button>
       <button class="btn btn-primary" onclick="saveBatchEdit()"><span class="material-icons-round">save</span>保存修改</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="wmModal" onclick="if(event.target===this)closeWmModal()">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-hdr">
+      <span class="material-icons-round" style="color:var(--primary)">water_drop</span>
+      <div class="modal-title">水印设置</div>
+      <button class="icon-btn" onclick="closeWmModal()"><span class="material-icons-round">close</span></button>
+    </div>
+    <div class="modal-body">
+      <div class="switch-row">
+        <span class="switch-label">水印开关</span>
+        <label class="md-switch">
+          <input type="checkbox" id="wmSwitch" onchange="toggleWmInput()">
+          <span class="track"></span>
+          <span class="thumb"></span>
+        </label>
+      </div>
+      <div class="wm-divider"></div>
+      <div class="form-group">
+        <label class="form-label">水印文字</label>
+        <input class="form-input" id="wmTextInput" type="text" placeholder="输入水印文字" maxlength="30">
+      </div>
+      <div style="font-size:12px;color:var(--on-surface-v);line-height:1.6">水印文字将以斜向排列平铺于页面背景；关闭此开关或清空文字后保存，即可隐藏水印。</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeWmModal()">取消</button>
+      <button class="btn btn-primary" onclick="doSaveWm()"><span class="material-icons-round">check</span>保存</button>
     </div>
   </div>
 </div>
@@ -631,7 +668,7 @@ function updateResponsive(){
   const m=isMobile();
   document.getElementById('mobileSearchBtn').style.display=m?'flex':'none';
   const emptyEl=document.getElementById('emptyHint');
-  if(emptyEl)emptyEl.textContent=m?'暂无数据，点击右下角 + 新增':'暂无数据，点击右上角 + 新增纪念币';
+  if(emptyEl)emptyEl.textContent=m?'暂无数据，请点击右下角「+」新增':'暂无数据，请点击右上角「+」新增纪念币';
   _updateDrawerFileSection();
   if(!m){
     const msb=document.getElementById('mobileSearchBar');
@@ -721,7 +758,7 @@ function renderFileList(){
   renderDrawerFileList();
 }
 function addNewFile(){
-  const name=prompt('请输入新库存文件名（不含扩展名）');if(!name?.trim())return;
+  const name=prompt('请输入新的库存文件名（不含扩展名）');if(!name?.trim())return;
   let n=name.trim();
   if(!n.endsWith('.json'))n=n+'.json';
   if(repo[n]){showSnack('文件名已存在！',true);return}
@@ -734,9 +771,9 @@ function switchFile(name){
 }
 function closeFile(name){
   if(Object.keys(repo).length<=1){showSnack('至少保留一个文件！',true);return}
-  if(!confirm(`关闭【${name}】？数据将从本地删除，建议先导出备份！`))return;
+  if(!confirm(`确定关闭文件【${name}】吗？相关数据将从本地删除，建议先导出备份！`))return;
   delete repo[name];curFile=Object.keys(repo)[0];curCatFilter=[];selectedIds=[];editingId=null;
-  fixData();autoSave();renderAll();updateBatchBar();showSnack(`已关闭 ${name}`)
+  fixData();autoSave();renderAll();updateBatchBar();showSnack(`已关闭文件 ${name}`)
 }
 
 function renderCatChips(){
@@ -841,7 +878,7 @@ function doBatchCat(){
   const id=Number(document.getElementById('batchCatSel').value);
   const act=document.getElementById('batchCatAction').value;
   if(!id){showSnack('请选择目标分类！',true);return}
-  if(!selectedIds.length){showSnack('请先选择！',true);return}
+  if(!selectedIds.length){showSnack('请选择条目！',true);return}
   const coins=getCurCoins().filter(c=>selectedIds.includes(c.id));
   let msg='';
   if(act==='add'){
@@ -857,7 +894,7 @@ function doBatchCat(){
       msg=n?`已为 ${n} 条添加分类「${getCatName(id)}」`:'所选条目均已在该分类中';
     }
   }else if(act==='remove'){
-    if(id===DEF_CAT_ID){showSnack('未分类是兜底分类，无需移除（空分类会自动归入未分类）',true);return}
+    if(id===DEF_CAT_ID){showSnack('「未分类」为默认分类，无需移除（空分类将自动归入未分类）',true);return}
     let n=0;coins.forEach(c=>{if(c.categoryIds.includes(id)){c.categoryIds=c.categoryIds.filter(x=>x!==id);if(!c.categoryIds.length)c.categoryIds=[DEF_CAT_ID];n++;}});
     msg=n?`已从 ${n} 条移除分类「${getCatName(id)}」`:'所选条目均不在该分类中';
   }else{
@@ -867,18 +904,18 @@ function doBatchCat(){
   selectedIds=[];fixData();autoSave();renderAll();updateBatchBar();showSnack(msg)
 }
 function batchDelete(){
-  if(!selectedIds.length){showSnack('请先选择！',true);return}
-  if(!confirm(`确定删除 ${selectedIds.length} 条纪念币？`))return;
+  if(!selectedIds.length){showSnack('请选择条目！',true);return}
+  if(!confirm(`确定删除所选 ${selectedIds.length} 条记录吗？`))return;
   const f=getCurFile();f.coins=f.coins.filter(c=>!selectedIds.includes(c.id));
   if(selectedIds.includes(editingId))editingId=null;
   selectedIds=[];fixData();autoSave();renderAll();updateBatchBar();showSnack('批量删除成功！')
 }
 
 function openBatchEditModal(){
-  if(!selectedIds.length){showSnack('请先选择要编辑的物品！',true);return}
+  if(!selectedIds.length){showSnack('请选择要编辑的条目！',true);return}
   const coins=getCurCoins();
   const items=coins.filter(c=>selectedIds.includes(c.id));
-  if(!items.length){showSnack('选择的物品不存在！',true);return}
+  if(!items.length){showSnack('所选条目不存在！',true);return}
   document.getElementById('beCount').textContent=items.length;
   document.getElementById('batchEditList').innerHTML=items.map(c=>{
     const cnt=Math.max(0,parseInt(c.count)||0);
@@ -886,11 +923,11 @@ function openBatchEditModal(){
     return `<div class="be-item">
       <div class="be-info">
         <div class="be-name">${h(c.name)}</div>
-        <div class="be-sub">${catBadges(c)}<span>面值 <b>${p}</b> 元 · 原库存 <b>${cnt}</b> 枚</span></div>
+        <div class="be-sub">${catBadges(c)}<span>面值 <b>${p}</b> 元 · 当前 <b>${cnt}</b> → 调整后 <b id="be-prev-${c.id}">${cnt}</b> 枚</span></div>
       </div>
       <div class="be-stepper">
         <button class="be-btn" onclick="beStep(${c.id},-1)" aria-label="减少">−</button>
-        <input class="be-count" id="be-count-${c.id}" type="number" min="0" value="${cnt}" oninput="beInput(${c.id})" onchange="beInput(${c.id})">
+        <input class="be-count" id="be-delta-${c.id}" type="number" value="0" placeholder="±数量" oninput="beInput(${c.id})" onchange="beInput(${c.id})">
         <button class="be-btn" onclick="beStep(${c.id},1)" aria-label="增加">+</button>
       </div>
     </div>`;
@@ -899,27 +936,45 @@ function openBatchEditModal(){
 }
 function closeBatchEditModal(){document.getElementById('batchEditModal').classList.remove('open')}
 function beStep(id,delta){
-  const el=document.getElementById('be-count-'+id);if(!el)return;
-  let v=(parseInt(el.value)||0)+delta;if(v<0)v=0;
+  const el=document.getElementById('be-delta-'+id);if(!el)return;
+  let v=(parseInt(el.value)||0)+delta;
   el.value=v;beInput(id);
 }
 function beInput(id){
-  const el=document.getElementById('be-count-'+id);if(!el)return;
-  let v=Math.floor(Number(el.value));
-  if(isNaN(v)||v<0)v=0;
+  const el=document.getElementById('be-delta-'+id);if(!el)return;
+  let v=parseInt(el.value);
+  if(isNaN(v))v=0;
   el.value=v;
+  const coin=getCurCoins().find(c=>c.id===id);
+  const prev=document.getElementById('be-prev-'+id);
+  if(coin&&prev){
+    const cur=Math.max(0,parseInt(coin.count)||0);
+    const next=cur+v;
+    prev.textContent=next;
+    prev.style.color=next<0?'var(--error)':'var(--on-surface)';
+  }
 }
 function saveBatchEdit(){
   const coins=getCurCoins();
-  let changed=0;
+  const problems=[];
+  const apply=[];
   selectedIds.forEach(id=>{
-    const el=document.getElementById('be-count-'+id);if(!el)return;
     const coin=coins.find(c=>c.id===id);if(!coin)return;
-    const v=Math.max(0,parseInt(el.value)||0);
-    if(Number(coin.count)!==v){coin.count=v;changed++;}
+    const el=document.getElementById('be-delta-'+id);if(!el)return;
+    const v=parseInt(el.value)||0;
+    const cur=Math.max(0,parseInt(coin.count)||0);
+    if(cur+v<0)problems.push(coin.name);
+    else apply.push({coin,next:cur+v});
   });
+  if(problems.length){
+    if(problems.length===1)showSnack(`出库数量超出库存：「${problems[0]}」调整后库存为负数，未保存！`,true);
+    else showSnack(`有 ${problems.length} 条出库数量超出库存，已取消保存！`,true);
+    return;
+  }
+  let changed=0;
+  apply.forEach(a=>{if(Number(a.coin.count)!==a.next){a.coin.count=a.next;changed++;}});
   if(changed){autoSave();renderAll();updateBatchBar();showSnack(`已更新 ${changed} 条库存`);}
-  else{showSnack('没有数量变化');}
+  else{showSnack('数量无变化');}
   closeBatchEditModal();
 }
 
@@ -984,45 +1039,59 @@ function doSave(){
   editingId=null;curCatFilter=[];fixData();autoSave();renderAll();closeAddModal()
 }
 function deleteItem(id){
-  if(!confirm('确定删除该纪念币？'))return;
+  if(!confirm('确定删除该纪念币吗？'))return;
   const f=getCurFile();f.coins=f.coins.filter(c=>c.id!==id);
   if(editingId===id)editingId=null;selectedIds=selectedIds.filter(i=>i!==id);
-  fixData();autoSave();renderAll();updateBatchBar();showSnack('已删除！')
+  fixData();autoSave();renderAll();updateBatchBar();showSnack('删除成功！')
 }
 
 function openCatModal(){renderCatList();document.getElementById('catModal').classList.add('open')}
 function closeCatModal(){document.getElementById('catModal').classList.remove('open')}
 function renderCatList(){
   const cats=getCurCats();
-  document.getElementById('catList').innerHTML=cats.map(c=>`
+  document.getElementById('catList').innerHTML=cats.map((c,i)=>{
+    const isDef=c.id===DEF_CAT_ID;
+    return `
     <div class="cat-row">
       <span class="cat-row-name">${h(c.name)}</span>
-      ${c.id===DEF_CAT_ID?'<span class="cat-row-def">默认分类</span>':`
+      ${isDef?'<span class="cat-row-def">默认分类</span>':`
+        <button class="row-btn btn-move" onclick="moveCat(${c.id},-1)" ${i===1?'disabled':''}><span class="material-icons-round">arrow_upward</span></button>
+        <button class="row-btn btn-move" onclick="moveCat(${c.id},1)" ${i===cats.length-1?'disabled':''}><span class="material-icons-round">arrow_downward</span></button>
         <button class="row-btn btn-edit" onclick="editCategory(${c.id})"><span class="material-icons-round">edit</span></button>
         <button class="row-btn btn-del" onclick="deleteCategoryM(${c.id})"><span class="material-icons-round">delete</span></button>`}
-    </div>`).join('');
+    </div>`;
+  }).join('');
+}
+function moveCat(id,dir){
+  const cats=getCurCats();
+  const i=cats.findIndex(c=>c.id===id);
+  if(i<=0)return;
+  const j=i+dir;
+  if(j<=0||j>=cats.length)return;
+  [cats[i],cats[j]]=[cats[j],cats[i]];
+  autoSave();renderCatOptions();renderCatChips();renderCatList();showSnack('分类顺序已调整');
 }
 function doAddCat(){
   const name=document.getElementById('newCatInput').value.trim();if(!name){showSnack('请输入分类名称！',true);return}
   const cats=getCurCats();if(cats.find(c=>c.name===name)){showSnack('分类名称已存在！',true);return}
   const newId=(cats.length>0?Math.max(...cats.map(c=>c.id)):0)+1;cats.push({id:newId,name});
   autoSave();renderCatOptions();renderCatChips();renderCatList();
-  document.getElementById('newCatInput').value='';showSnack('分类已新增！')
+  document.getElementById('newCatInput').value='';showSnack('分类添加成功！')
 }
 function editCategory(id){
   const cats=getCurCats();const c=cats.find(x=>x.id===id);if(!c)return;
   const n=prompt('输入新分类名称',c.name);if(!n?.trim())return;
   if(cats.find(x=>x.name===n.trim()&&x.id!==id)){showSnack('名称已存在！',true);return}
-  c.name=n.trim();autoSave();renderAll();renderCatList();showSnack('分类已修改！')
+  c.name=n.trim();autoSave();renderAll();renderCatList();showSnack('分类修改成功！')
 }
 function deleteCategoryM(id){
   if(id===DEF_CAT_ID){showSnack('默认分类不可删除！',true);return}
-  if(!confirm('删除该分类？该分类下的纪念币将从该分类中移除，若无其他分类则归入【未分类】'))return;
+  if(!confirm('确定删除该分类？该分类下的纪念币将从该分类中移除，若不属于其他分类，将自动归入【未分类】'))return;
   const f=getCurFile();
   f.coins.forEach(c=>{c.categoryIds=c.categoryIds.filter(x=>x!==id);if(!c.categoryIds.length)c.categoryIds=[DEF_CAT_ID]});
   f.categories=f.categories.filter(c=>c.id!==id);
   curCatFilter=curCatFilter.filter(x=>x!==id);
-  autoSave();renderAll();renderCatList();showSnack('分类已删除！')
+  autoSave();renderAll();renderCatList();showSnack('分类删除成功！')
 }
 
 function toggleMobileSearch(){
@@ -1047,9 +1116,9 @@ function handleImportFile(e){
       if(Array.isArray(data)){imp={coins:data.map((c,i)=>({...c,id:i+1,categoryIds:[DEF_CAT_ID]})),categories:[{id:DEF_CAT_ID,name:DEF_CAT_NAME}]}}
       else if(data.coins&&data.categories){imp=data;if(!imp.categories.some(c=>c.id===DEF_CAT_ID))imp.categories.unshift({id:DEF_CAT_ID,name:DEF_CAT_NAME})}
       else{showSnack('文件格式不正确！',true);return}
-      const isNew=confirm('新建文件导入？\n【确定】新建文件\n【取消】覆盖当前文件');
+      const isNew=confirm('导入为新文件？\n【确定】导入为新文件\n【取消】覆盖当前文件');
       if(isNew){let name=file.name;if(repo[name]){name=prompt('文件名已存在，请输入新名称',name.replace(/\.json$/,''));if(!name?.trim())return;name=name.trim();if(!name.endsWith('.json'))name+='.json';if(repo[name]){showSnack('文件名已存在！',true);return}}repo[name]=imp;curFile=name}
-      else{if(!confirm('确定覆盖当前文件？'))return;repo[curFile]=imp}
+      else{if(!confirm('确定覆盖当前文件吗？'))return;repo[curFile]=imp}
       selectedIds=[];editingId=null;fixData();autoSave();renderAll();updateBatchBar();showSnack('导入成功！')
     }catch(err){showSnack('导入失败：格式错误',true);console.error(err)}
   };reader.readAsText(file);e.target.value='';
@@ -1059,10 +1128,10 @@ function manualSave(){
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');a.href=url;a.download=curFile;a.click();
   setTimeout(()=>URL.revokeObjectURL(url),1000);
-  showSnack(`已导出 ${curFile}`)
+  showSnack(`已导出文件 ${curFile}`)
 }
 function clearAll(){
-  if(!confirm('确定清空当前库存？此操作不可恢复！'))return;
+  if(!confirm('确定清空当前库存吗？此操作不可恢复！'))return;
   getCurFile().coins=[];selectedIds=[];editingId=null;fixData();autoSave();renderAll();updateBatchBar();showSnack('已清空当前库存！')
 }
 
@@ -1081,19 +1150,19 @@ function doSaveGH(){
   const t=document.getElementById('ghToken').value.trim();
   const r=document.getElementById('ghRepo').value.trim();
   const p=document.getElementById('ghPath').value.trim();
-  if(!t||!r||!p){showSnack('请填写完整配置！',true);return}
-  if(!/^[^/]+\/[^/]+$/.test(r)){showSnack('仓库格式错误，应为 用户名/仓库名',true);return}
+  if(!t||!r||!p){showSnack('请填写完整的配置信息！',true);return}
+  if(!/^[^/]+\/[^/]+$/.test(r)){showSnack('仓库格式错误，应为「用户名/仓库名」',true);return}
   ghConfig={token:t,repo:r,path:p};localStorage.setItem('coinGHConfig',JSON.stringify(ghConfig));
   closeGHModal();updateGHStatus();showSnack('GitHub 配置已保存！')
 }
 function clearGHConfig(){
-  if(!confirm('确定清除 GitHub 配置？'))return;
+  if(!confirm('确定清除 GitHub 配置吗？'))return;
   ghConfig={token:'',repo:'',path:''};localStorage.removeItem('coinGHConfig');
   closeGHModal();updateGHStatus();showSnack('已清除 GitHub 配置！')
 }
 async function syncToGitHub(){
-  if(!ghConfig.token){showSnack('请先配置 GitHub Token！',true);return}
-  if(!ghConfig.repo||!ghConfig.path){showSnack('请先完善 GitHub 配置！',true);return}
+  if(!ghConfig.token){showSnack('请配置 GitHub Token！',true);return}
+  if(!ghConfig.repo||!ghConfig.path){showSnack('请完善 GitHub 配置！',true);return}
   showSnack('正在同步到 GitHub...');
   try{
     const content=btoa(unescape(encodeURIComponent(JSON.stringify(repo,null,2))));
@@ -1114,7 +1183,7 @@ async function syncToGitHub(){
       showSnack(sha?'已同步到 GitHub！':'已创建文件并同步到 GitHub！');
     }else{
       const e=await res.json();
-      const hint=res.status===404?`找不到仓库或路径，请确认 "${ghConfig.repo}" 仓库存在，路径 "${ghConfig.path}" 正确`:
+      const hint=res.status===404?`找不到仓库或路径，请确认仓库「${ghConfig.repo}」存在、路径「${ghConfig.path}」正确`:
                  res.status===401?'Token 无效，请重新生成':
                  res.status===403?'Token 权限不足，需要 repo 写入权限':
                  (e.message||'未知错误');
@@ -1123,7 +1192,7 @@ async function syncToGitHub(){
   }catch(e){showSnack('同步失败，请检查网络连接！',true);console.error(e)}
 }
 async function syncFromGitHub(){
-  if(!ghConfig.token||!ghConfig.repo||!ghConfig.path){showSnack('请先完善 GitHub 配置！',true);return}
+  if(!ghConfig.token||!ghConfig.repo||!ghConfig.path){showSnack('请完善 GitHub 配置！',true);return}
   showSnack('正在从 GitHub 拉取...');
   try{
     const url=`https://api.github.com/repos/${ghConfig.repo}/contents/${ghConfig.path}`;
@@ -1132,7 +1201,7 @@ async function syncFromGitHub(){
     if(!res.ok){
       let hint='未知错误';
       try{const e=await res.json();hint=e.message||hint;}catch{}
-      if(res.status===404)hint=`找不到文件，请确认仓库 "${ghConfig.repo}" 和路径 "${ghConfig.path}" 正确`;
+      if(res.status===404)hint=`找不到文件，请确认仓库「${ghConfig.repo}」与路径「${ghConfig.path}」正确`;
       else if(res.status===401)hint='Token 无效，请重新生成';
       else if(res.status===403)hint='Token 权限不足，需要 repo 读取权限';
       showSnack(`拉取失败：${hint}`,true);return;
@@ -1141,7 +1210,7 @@ async function syncFromGitHub(){
     const decoded=decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
     const parsed=JSON.parse(decoded);
     if(typeof parsed==='object'&&!Array.isArray(parsed)){
-      if(!confirm('从云端拉取将覆盖本地全部数据，确定继续？'))return;
+      if(!confirm('从云端拉取将覆盖本地全部数据，是否继续？'))return;
       repo=parsed;curFile=Object.keys(repo)[0]||'数据.json';fixData();autoSave();renderAll();updateBatchBar();showSnack('已从 GitHub 拉取数据！')
     }else showSnack('云端数据格式异常！',true)
   }catch(e){showSnack('拉取失败，请检查网络连接！',true);console.error(e)}
@@ -1151,7 +1220,7 @@ async function testGHConfig(){
   const r=document.getElementById('ghRepo').value.trim();
   const p=document.getElementById('ghPath').value.trim();
   const result=document.getElementById('ghTestResult');
-  if(!t||!r){result.style.display='block';result.style.background='var(--error-c)';result.style.color='var(--error)';result.textContent='请先填写 Token 和仓库名';return}
+  if(!t||!r){result.style.display='block';result.style.background='var(--error-c)';result.style.color='var(--error)';result.textContent='请填写 Token 和仓库名';return}
   result.style.display='block';result.style.background='var(--surface-c)';result.style.color='var(--on-surface-v)';result.textContent='测试中...';
   try{
     const repoUrl=`https://api.github.com/repos/${r}`;
@@ -1162,7 +1231,7 @@ async function testGHConfig(){
     }
     if(repoRes.status===404){
       result.style.background='var(--error-c)';result.style.color='var(--error)';
-      result.textContent=`✗ 找不到仓库 "${r}"，请检查名称是否正确`;return;
+      result.textContent=`✗ 找不到仓库「${r}」，请检查名称是否正确`;return;
     }
     if(!repoRes.ok){
       result.style.background='var(--error-c)';result.style.color='var(--error)';
@@ -1176,7 +1245,7 @@ async function testGHConfig(){
         result.textContent=`✓ 连接成功，文件已存在`;
       }else if(fileRes.status===404){
         result.style.background='#FFF3E0';result.style.color='#E65100';
-        result.textContent=`⚠ 仓库连接成功，但路径 "${p}" 下文件不存在 —— 同步时将自动创建`;
+        result.textContent=`⚠ 仓库连接成功，但路径「${p}」下文件不存在，同步时将自动创建`;
       }else{
         result.style.background='var(--error-c)';result.style.color='var(--error)';
         result.textContent=`✗ 文件路径请求失败 (${fileRes.status})`;
@@ -1303,11 +1372,82 @@ document.addEventListener('touchend',e=>{
 },{passive:true});
 
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){closeDrawer();closeAddModal();closeCatModal();closeGHModal();closeBatchEditModal()}
+  if(e.key==='Escape'){closeDrawer();closeAddModal();closeCatModal();closeGHModal();closeBatchEditModal();closeWmModal()}
 });
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
 else init();
+</script>
+
+<style>
+.watermark-item{
+    position:fixed;
+    color:#777;
+    opacity:0.20;
+    transform:rotate(-30deg);
+    pointer-events:none;
+    z-index:99999;
+    white-space:nowrap;
+}
+.switch-row{display:flex;align-items:center;justify-content:space-between}
+.switch-label{font-size:13px;font-weight:500;color:var(--on-surface-v)}
+.md-switch{position:relative;display:inline-block;width:52px;height:32px;flex-shrink:0}
+.md-switch input{position:absolute;inset:0;margin:0;opacity:0;cursor:pointer;z-index:2}
+.md-switch .track{position:absolute;inset:0;border-radius:16px;background:var(--outline-v);transition:background .2s}
+.md-switch .thumb{position:absolute;top:4px;left:4px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .3s cubic-bezier(.34,1.56,.64,1)}
+.md-switch input:checked+.track{background:var(--primary)}
+[data-theme="dark"] .md-switch input:checked+.track{background:var(--primary-c)}
+.md-switch input:checked~.thumb{transform:translateX(20px)}
+.form-input:disabled{opacity:.5;cursor:not-allowed}
+.wm-divider{height:1px;background:var(--outline-v);margin:14px 0}
+</style>
+<script>
+function getWatermarkCfg(){
+  try{const s=localStorage.getItem('coinWatermark');if(s){const o=JSON.parse(s);if(o&&typeof o.text==='string')return {text:o.text,enabled:o.enabled!==false};}}catch{}
+  return {text:'',enabled:false};
+}
+let _wmCfg=getWatermarkCfg();
+function createWatermark(){
+  document.querySelectorAll(".watermark-item").forEach(d=>d.remove());
+  if(!_wmCfg.enabled||!_wmCfg.text)return;
+  const fs=Math.max(20,Math.min(30,_wmCfg.text.length<=4?30:26));
+  const w=window.innerWidth;
+  const h=window.innerHeight;
+  for(let x=-fs;x<w+fs;x+=fs*6){
+    for(let y=-fs;y<h+fs;y+=fs*5.5){
+      const div=document.createElement("div");
+      div.className="watermark-item";
+      div.style.left=x+"px";
+      div.style.top=y+"px";
+      div.style.fontSize=fs+"px";
+      div.innerText=_wmCfg.text;
+      document.body.appendChild(div);
+    }
+  }
+}
+function toggleWmInput(){
+  const on=document.getElementById('wmSwitch').checked;
+  document.getElementById('wmTextInput').disabled=!on;
+}
+function openWmModal(){
+  document.getElementById('wmSwitch').checked=!!_wmCfg.enabled;
+  document.getElementById('wmTextInput').value=_wmCfg.text;
+  toggleWmInput();
+  document.getElementById('wmModal').classList.add('open');
+  setTimeout(()=>{if(_wmCfg.enabled)document.getElementById('wmTextInput').focus()},60);
+}
+function closeWmModal(){document.getElementById('wmModal').classList.remove('open')}
+function doSaveWm(){
+  const on=document.getElementById('wmSwitch').checked;
+  const v=document.getElementById('wmTextInput').value.trim();
+  _wmCfg={text:v,enabled:on};
+  localStorage.setItem('coinWatermark',JSON.stringify(_wmCfg));
+  createWatermark();
+  closeWmModal();
+  showSnack(on&&v?'水印已更新！':'水印已关闭');
+}
+createWatermark();
+window.addEventListener("resize",createWatermark);
 </script>
 </body>
 </html>
