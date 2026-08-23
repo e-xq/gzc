@@ -114,7 +114,7 @@ body{display:flex;flex-direction:column}
 .btn-secondary .material-icons-round{color:var(--on-surface-v)}
 .sel-small{height:32px;border:1.5px solid var(--outline-v);border-radius:var(--r-sm);padding:0 8px;font-size:12px;background:var(--surface-0);color:var(--on-surface);font-family:inherit;outline:none}
 
-.table-area{flex:1;overflow-y:auto;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.table-area{flex:1;display:flex;flex-direction:column;overflow-y:auto;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .coin-table{width:100%;border-collapse:collapse;min-width:650px}
 .coin-table th{padding:10px 14px;font-size:11px;font-weight:700;color:var(--on-surface-v);text-align:left;background:var(--surface-low);border-bottom:1px solid var(--outline-v);position:sticky;top:0;z-index:5;white-space:nowrap;letter-spacing:.3px;cursor:pointer;user-select:none}
 .coin-table th:hover{background:var(--surface-c)}
@@ -134,7 +134,7 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
 .row-btn:disabled{opacity:.3;cursor:not-allowed;pointer-events:none}
 .cat-badge{display:inline-block;padding:2px 8px;border-radius:100px;background:var(--primary-c);color:var(--on-primary-c);font-size:11px;font-weight:600}
 .empty-state{display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:80px 20px;color:var(--on-surface-v)}
-.empty-state.show{display:flex}
+.empty-state.show{display:flex;flex:1}
 .empty-state .material-icons-round{font-size:52px;opacity:.25}
 
 .card-list-wrap{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;display:none}
@@ -224,7 +224,7 @@ input[type=checkbox]{accent-color:var(--primary);width:15px;height:15px;cursor:p
   #left-panel{display:none!important}
   #right-panel{width:100%}
   .table-area{display:none}
-  .card-list-wrap{display:block}
+  .card-list-wrap{display:flex;flex-direction:column}
   .toolbar{height:auto;padding:10px 12px;gap:8px;flex-wrap:wrap;overflow:visible}
   .search-wrap{flex:1;min-width:0}
   .search-input{width:100%!important;min-width:0}
